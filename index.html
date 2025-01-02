@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tanya Jawab</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: linear-gradient(135deg, #ff9a8b, #ff6a88, #ff5e62);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            color: white;
+        }
+        .question {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .answer {
+            width: 80%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #ff5e62;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #ff4a52;
+        }
+        .score {
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            .question {
+                font-size: 1.3rem;
+            }
+            .answer {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+            .btn {
+                width: 100%;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="game">
+            <div class="question" id="question"></div>
+            <input type="text" id="answer" class="answer" placeholder="Ketik jawaban di sini">
+            <button class="btn" id="submit">Jawab</button>
+        </div>
+        <div class="score" id="score">Total Dana: Rp0</div>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "Seberapa kamu mencintaiku?", value: 500 },
+            { text: "Apa alasanmu memilihku?", value: 500 },
+            { text: "Apa rencana kita di masa depan?", value: 500 },
+            { text: "Apa pengalaman hidup yang paling membentuk dirimu hingga menjadi seperti sekarang?", value: 500 },
+            { text: "Siapa orang yang paling memengaruhi cara pandangmu tentang cinta dan hubungan?", value: 500 },
+            { text: "Apa kenangan masa kecil yang paling berkesan bagimu?", value: 500 },
+            { text: "Apa yang menjadi tujuan terbesar dalam hidupmu?", value: 500 },
+            { text: "Apa mimpi yang ingin kamu capai dalam 5 atau 10 tahun ke depan?", value: 500 },
+            { text: "Jika kamu bisa melakukan satu hal tanpa takut gagal, apa yang akan kamu lakukan?", value: 500 },
+            { text: "Apa yang kamu rasakan saat pertama kali bertemu denganku?", value: 500 },
+            { text: "Menurutmu, apa hal terbaik dari hubungan kita?", value: 500 },
+            { text: "Apa yang bisa aku lakukan untuk membuatmu merasa lebih dicintai dan dihargai?", value: 500 },
+            { text: "Apa hal yang membuatmu merasa benar-benar bahagia?", value: 500 },
+            { text: "Apa pandanganmu tentang pernikahan dan keluarga?", value: 500 },
+            { text: "Bagaimana kamu membayangkan kehidupan kita bersama di masa depan?", value: 500 },
+            { text: "Apa yang paling kamu inginkan dari hubungan ini?", value: 500 },
+            { text: "Apa makna cinta bagi dirimu?", value: 500 },
+            { text: "Apa momen bersama kita yang paling membekas di ingatanmu?", value: 500 },
+            { text: "Jika kamu bisa merencanakan hari yang sempurna untuk kita, seperti apa hari itu?", value: 500 }
+        ];
+
+        let currentQuestionIndex = 0;
+        let totalScore = 0;
+
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+        const submitButton = document.getElementById('submit');
+        const scoreElement = document.getElementById('score');
+
+        function loadQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                questionElement.textContent = questions[currentQuestionIndex].text;
+                answerElement.value = '';
+            } else {
+                endGame();
+            }
+        }
+
+        function handleAnswer() {
+            const answer = answerElement.value.trim();
+            if (answer) {
+                totalScore += questions[currentQuestionIndex].value;
+                sendToWhatsApp(questions[currentQuestionIndex].text, answer);
+                currentQuestionIndex++;
+                updateScore();
+                loadQuestion();
+            } else {
+                alert("Silakan isi jawaban sebelum melanjutkan!");
+            }
+        }
+
+        function sendToWhatsApp(question, answer) {
+            const phoneNumber = "+6285212637719";
+            const message = `Pertanyaan: ${question}%0AJawaban: ${answer}`;
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        function updateScore() {
+            scoreElement.textContent = `Total Dana: Rp${totalScore}`;
+        }
+
+        function endGame() {
+            questionElement.textContent = "Terima kasih sudah bermain!";
+            document.getElementById('game').innerHTML = ` 
+                <p>Permainan selesai. Kamu telah mengumpulkan total dana sebesar Rp${totalScore}.</p>
+            `;
+        }
+
+        submitButton.addEventListener('click', handleAnswer);
+
+        loadQuestion();
+    </script>
+</body>
+</html>
